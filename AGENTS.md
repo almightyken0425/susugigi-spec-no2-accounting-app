@@ -6,9 +6,9 @@
 
 ## 規格政策
 
-- 修改前使用 `decision_framework_router`。
-- 規格修改必須使用 `spec_writer`。
-- Markdown 必須使用 `universal_writing_linter`。
+- 修改前使用 `product-scope`。
+- 規格修改必須使用 `code-spec`。
+- Markdown 必須使用 `doc-markdown`。
 - Model 位於 `no1_data_models`。
 - View 位於 `no2_screens`。
 - Logic 位於 `no3_logics`。
