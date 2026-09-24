@@ -1,4 +1,4 @@
-$wish Import Field Guide
+Swish Import Field Guide
 
 transaction_datetime
   Required
