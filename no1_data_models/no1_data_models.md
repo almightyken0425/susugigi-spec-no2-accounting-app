@@ -10,7 +10,7 @@
   - `language`: String - Not Null, 介面語言代碼，例如 en
   - `baseCurrencyId`: Number - Foreign Key to Currencies, Not Null, 主要貨幣
   - `timeZone`: String - Not Null, IANA Timezone ID，例如 Asia/Taipei
-  - `theme`: String - Not Null, 主題設定，例如 light、dark、system
+  - `theme`: String - Not Null, Default `theme1`, 內建主題識別碼，目前有效值為 `theme1`、`theme2`
   - `launchMode`: String - Not Null, Default `home`, 啟動模式，可為 `home`、`expense`、`income`、`transfer`
   - `weekStart`: String - Not Null, Default `auto`, 週起始日偏好，可為 `auto`、`sunday`、`monday`；`auto` 代表依使用者語系慣例決定
   - `analyticsConsent`: Boolean - Not Null, Default `false`, 財務分析相容欄位，目前停用
@@ -25,7 +25,8 @@
 
 **與 User Management 的關係**: 本機此表為偏好設定唯一真相；`users/{uid}/preferences` 為單向上傳鏡像，僅供資料分析維度，永不下載套用。
 - 整份 `users/{uid}` 雲端文件含 `provider`、文件根層 `updatedAt` 等頂層欄位的形狀權威屬 User Management module 的 Users 資料模型，本 module 不重複承載定義
-- `language`、`timeZone`、`theme`、`launchMode`、`weekStart`、`analyticsConsent` 直接對應上傳
+- `language`、`theme`、`launchMode`、`weekStart`、`analyticsConsent` 直接對應上傳
+- 本機 `timeZone` 對應雲端 `preferences.timezone`，值不轉換
 - `usageAnalyticsConsent` 僅存本機
 - `usageAnalyticsConsentDecided` 僅存本機
 - `baseCurrencyId` 上傳時轉 ISO Code 寫入 `preferences.currency`，單向轉換不反向
@@ -236,11 +237,15 @@
 ## 金額數值標準
 
 - **儲存標準:**
-  - 所有金額相關欄位以固定倍率縮放為整數存放，型別為 Number，與幣別無關
+  - 所有金額相關欄位以實際金額乘以 10,000 縮放為整數存放，型別為 Number，與幣別無關
   - 涵蓋 Transactions 的 `amount`、Transfers 的 `amountFrom` 與 `amountTo`、Schedules 的 `templateAmount`、`templateAmountFrom` 與 `templateAmountTo`
-  - 最大可存的縮放整數落在系統安全整數上界，約 9.007×10^15
+  - 儲存整數的絕對值上限為 9,007,199,254,740,991
 - **輸入約束:**
-  - 使用者輸入受位數上限約束，確保縮放後不超過系統安全整數上界
+  - 金額按鍵輸入值上限在一般模式為 900,719,925,474，在千元模式為 900,719,925
+  - 一般模式上限為儲存整數上限除以 10,000 後向下取整
+  - 千元模式以千元為輸入單位，實際金額為輸入值乘以 1,000，再使用相同的 10,000 倍儲存倍率
+  - 千元模式上限為儲存整數上限除以 10,000,000 後向下取整
+  - 上述兩個按鍵輸入值上限不作為計算器結果或匯入資料的儲存上限。各來源換算後的儲存整數均受同一絕對值上限約束
 - **正負與零值政策:**
   - 交易金額不得為 0
   - 轉帳的轉出金額、轉入金額皆須大於 0
