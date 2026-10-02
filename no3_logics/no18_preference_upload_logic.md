@@ -50,7 +50,9 @@
       - `launchMode` 值正規化，非 `home` / `expense` / `income` / `transfer` 一律改為 `home`
       - `weekStart` 值正規化，非 `auto` / `sunday` / `monday` 一律改為 `auto`
       - `analyticsConsent` 遷移自舊資料的 Null 視為 `true`，代表已同意
-      - `theme`、`language` 欄位名與值皆直送
+      - `theme` 欄位名與值直送
+      - `language` 使用 LanguageSettingScreen 支援的 20 個 BCP 47 代碼，欄位名與值直送。繁體中文保留 `zh-Hant`，不轉為 `zh-TW`
+      - 歷史雲端 `zh-TW` 隨裝置正常上傳本機實際語系時覆寫，不做全庫批次遷移。尚未正常上傳的帳號可暫留舊值，不因此改寫本機語系
       - 任一欄位轉換後值為空值或 Null 者，略過不寫入
     - 自動更新文件根層 updatedAt 為當下時間，無論傳入欄位數量
     - updatedAt 僅標記文件最後寫入時間，無消費端，不參與衝突解決

@@ -31,8 +31,8 @@
       - 從裝置 Locale 推導
       - 若無則預設 TWD，並轉換為 Currency ID
     - 語系:
-      - 從裝置 Locale 推導，與支援語系清單比對
-      - 比對成功則採該語系
+      - 將裝置 Locale 的完整語系代碼與支援語系清單比對
+      - 完整代碼相符才採該語系
       - 比對未匹配則 fallback 預設 en
       - 不做語族內 fallback，避免繁簡混雜或非預期語系出現
     - 時區:
@@ -85,9 +85,10 @@
   - **執行:**
     - 在 Firestore 建立 `users/{uid}` 文件
     - preferences 欄位取本機 Settings 的實際值，而非寫死預設
+    - 本機語系尚未取得時跳過雲端建立，不補入雲端預設語系，也不阻塞本機使用
   - **欄位:**
     - `uid`
-    - `email`: 恆為空值；不收集身分欄位，legacy 登入帳號亦不上傳
-    - `provider`: 匿名身分標 anonymous；legacy 登入帳號照其登入門真值
+    - `email`: 固定為 Null，不從認證資料取得 Email，legacy 登入身分也適用
+    - `provider`: 匿名身分標 `anonymous`，legacy Google 與 Apple 登入身分保留實際提供者
     - `createdAt`
     - `preferences`

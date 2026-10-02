@@ -32,7 +32,10 @@ note
 
 Notes
 
-- A row is skipped if a required field is empty, or if its date, amount, or currency is not in an accepted format.
+- During column mapping, every value in a required column must be present and use an accepted format and storage precision.
+- If any value is empty or has an invalid format or precision, that column cannot be selected for a required field. Correct the file before importing.
+- During import, a row is skipped if its date does not exist or is outside the storable range.
+- During import, a row is skipped if its amount is outside the storable range.
 - A positive amount is recorded as income, a negative amount as expense.
 - Accounts are matched by name and currency. The same name with a different currency creates a separate account.
 - If a field value contains a comma, wrap it in double quotes, e.g. "lunch, drinks".
