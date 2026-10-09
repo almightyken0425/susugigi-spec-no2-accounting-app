@@ -19,7 +19,7 @@
   - `homeTimeGranularity`: String | Null - Nullable, 首頁時間粒度顯示狀態，可為 `day`、`week`、`month`、`year`、`all`；Null 或集外值載入時視為 `day`
   - `homeGroupMode`: String | Null - Nullable, 首頁列表分組模式顯示狀態，可為 `category`、`date`；Null 或集外值載入時視為 `category`
   - `homeSelectedAccountIds`: String | Null - Nullable, 首頁已選帳戶清單，JSON 字串陣列序列化；Null 或無法解析視為無既有清單
-  - `lastSyncedAt`: Number | Null, Unix Timestamp ms - Nullable, 上次完成交易備份上傳的時間，作為 Delta 篩選基準；Null 代表尚未上傳過，偏好上傳不更新此欄位
+  - `lastSyncedAt`: Number | Null, Unix Timestamp ms - Nullable, 最近一次成功交易備份的起始時間，作為 Delta 篩選基準。Null 代表尚未成功上傳過。偏好上傳不更新此欄位
   - `createdAt`: Number, Unix Timestamp ms - Not Null
   - `updatedOn`: Number, Unix Timestamp ms - Not Null, 資料最後更新時間，同步依據
 

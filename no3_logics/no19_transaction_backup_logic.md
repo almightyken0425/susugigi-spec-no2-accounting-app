@@ -65,7 +65,8 @@
   - 讀取本機所有 transactions、transfers、accounts、categories、currency_rates、schedules
   - 依集合分批寫入 Firestore users/{uid}/{collection}，每批 500 筆
   - 委派至 QuotaManagementLogic 的 incrementQuota，累計上傳筆數至當日寫入配額
-  - 寫入完成後更新 Settings 表 lastSyncedAt 為當下時間
+  - 全部寫入成功後，將 Settings 的 lastSyncedAt 設為本次備份起始時間
+  - 上傳期間的本機修改與復原仍保留更新時間，供下次增量備份選取
 
 ---
 
@@ -76,10 +77,13 @@
 - **性質:**
   - 非同步，需處理網路錯誤與 Firestore 配額錯誤
 - **執行:**
-  - 以 Settings 表 lastSyncedAt 為 Delta 篩選基準，讀取自上次完成同步後的變更，涵蓋 transactions、transfers、accounts、categories、currency_rates、schedules
+  - 以 Settings 的 lastSyncedAt 為篩選基準，讀取 updatedOn 大於或等於該時間的變更
+  - 涵蓋 transactions、transfers、accounts、categories、currency_rates、schedules
+  - 包含備份後撤銷產生的修改、軟刪除或恢復，不改變復原等待期限
   - **IF** 無任何變更:
     - 跳過上傳，不更新 lastSyncedAt，RETURN
   - **ELSE:**
     - 依集合分批寫入 Firestore users/{uid}/{collection}，每批 500 筆
     - 委派至 QuotaManagementLogic 的 incrementQuota，累計上傳筆數至當日寫入配額
-    - 寫入完成後更新 Settings 表 lastSyncedAt 為當下時間
+    - 全部寫入成功後，將 Settings 的 lastSyncedAt 設為本次備份起始時間
+  - 上傳期間的本機修改與復原仍保留更新時間，供下次增量備份選取
